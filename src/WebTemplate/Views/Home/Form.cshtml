@@ -1,0 +1,86 @@
+@using WebTemplate.Shared.Extensions
+@using WebTemplate.Extensions
+@using WebTemplate.Settings
+
+@inject IOptions<AppSettings> appSettingsOptions
+@model LoginModel
+@{
+    var temp1 = ViewData.ModelExplorer;
+    var temp2 = ViewData.ModelMetadata;
+    var temp3 = ViewData.ModelState;
+    var temp4 = Model;
+    var action = Url.Action(null, new { culture = CultureInfo.CurrentCulture.Name });
+}
+<h1>{{schema.displayName}}</h1>
+<el-form ref="formRef" size="large" :model="model" style="width:300px;" label-width="120px" :rules="rules" action="@action" method="post">
+    <template v-for="(value,key,index) in model">
+        <el-form-item v-if="!getMeta(key).hideSurroundingHtml" :label="getMeta(key).displayName" :prop="key" :error="errors[key]">
+            <el-input v-model="model[key]" v-if="getType(key).match(/^password$/i)" type="password" clearable  />
+            <el-switch v-model="model[key]" v-else-if="getType(key).match(/^boolean/i)" clearable />
+            <el-input v-model="model[key]" v-else clearable />
+        </el-form-item>
+        <input type="hidden" v-model="model[key]" />
+    </template>
+    <el-button type="primary" class="width100" @@click="submitForm(formRef)">登录</el-button>
+    <button type="submit">submit</button>
+</el-form>
+<div>
+    @Json.Serialize(ViewContext.ModelState)
+</div>
+<script type="module">
+    @section scripts{
+        // import
+        ViewModel.setup = ()=>{
+            console.log('@Url.Content(Url.Action())');
+            const url = "@action";
+            const formRef = ref(null);
+            const model = reactive(@Html.Raw(Json.Serialize(Model)));
+            const errors = reactive(@Html.Raw(Json.Serialize(ViewData.ModelState.ToErrors())));
+            const schema = reactive(@Html.Raw(Json.Serialize(ViewData.ModelMetadata.GetSchema(ViewContext.HttpContext.RequestServices))));
+            const getMeta=(name)=>schema.properties.find(o=>o.name===name);
+            const getType=(name)=>{
+                const meta = getMeta(name);
+                return meta.templateHint??meta.dataTypeName??meta.modelType;
+            };
+            const getRules=(schema)=>{
+                 let rules = {};
+                 for (const meta of schema.properties)
+                 {
+                     const list = [];
+                     if(meta.isRequired)
+                     {
+                         list.push({ required: true, message: 'Please input Activity name', trigger: 'change' });
+                     }
+                     if(list.length)
+                     {
+                         rules[meta.name] = list;
+                     }
+                 }
+                 return rules;
+            };
+            const rules = reactive(getRules(schema));
+            const submitForm = async (form) => {      
+              try {
+                await form.validate();
+                const response = await post(url, model);
+                if (response.status === 200) {
+                    const result = await response.json();
+                    console.log(result);
+                }
+              } catch (e) {
+                console.error(e);
+              }
+            };
+            return {
+                formRef,
+                model,
+                errors,
+                schema,
+                rules,
+                getMeta,
+                getType,
+                submitForm,
+            };
+        };
+    }
+</script>

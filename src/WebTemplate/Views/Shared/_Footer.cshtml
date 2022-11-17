@@ -1,0 +1,8 @@
+@inject IStringLocalizer locale
+<div class="flex-align-items-center">
+    <el-space>
+        <span>@string.Format(locale["Copyright"],DateTime.Now.Year) v @Assembly.GetEntryAssembly()?.GetName().Version</span>
+        <el-link href="http://beian.miit.gov.cn/">吉ICP备14005068号-1</el-link>
+        <el-link target="_blank" href="http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=22010202000791">吉公网安备 22010202000791号</el-link>
+    </el-space>
+</div>

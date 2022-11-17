@@ -1,0 +1,178 @@
+@inject IOptions<RequestLocalizationOptions> requestLocalizationOptions
+@{
+    var cultureItems = requestLocalizationOptions.Value.SupportedUICultures?
+       .Select(o => new SelectListItem { Value = o.Name, Text = o.NativeName, Selected = o.Name == CultureInfo.CurrentCulture.Name })
+       .ToList();
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <base href="@Url.Content("~/")" />
+    <link rel="stylesheet" href="~/style/site.css" asp-append-version="true" />
+    <title>@ViewData["Title"] - WebApplication3</title>
+    <style>
+        #loading {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #fff;
+        }
+
+            #loading.show {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+            }
+
+                #loading.show svg {
+                    width: 42px;
+                    height: 42px;
+                    overflow: hidden;
+                    animation: loading-rotate 2s linear infinite;
+                }
+
+                    #loading.show svg .path {
+                        animation: loading-dash 1.5s ease-in-out infinite;
+                        stroke-dasharray: 90,150;
+                        stroke-dashoffset: 0;
+                        stroke-width: 2;
+                        stroke: #409eff;
+                        stroke-linecap: round;
+                    }
+    </style>
+</head>
+<body>
+    <div id="app">
+        <el-config-provider :locale="elLocale">
+            <el-container>
+                <el-header><partial name="_Header"></partial></el-header>
+                <el-container class="body">
+                    <el-main>
+                        <view-model></view-model>
+                    </el-main>
+                    <el-footer><partial name="_Footer"></partial></el-footer>
+                    <el-backtop target=".body" />
+                </el-container>
+            </el-container>
+            <app />
+        </el-config-provider>
+    </div>
+    <div id="loading" class="show">
+        <svg class="circular" viewBox="25 25 50 50"><circle class="path" cx="50" cy="50" r="20" fill="none"></circle></svg>
+    </div>
+    <script type="importmap">
+        {
+          "imports": {
+            "@@vue/devtools-api":"@Url.Content("~/libs/vue/devtools-api/index.js")",
+            "vue-demi": "@Url.Content("~/libs/vue-demi/index.mjs")",
+            "__commonjs": "@Url.Content("~/libs/commonJS/index.vite.js")",
+            "resize-detector": "@Url.Content("~/libs/resize-detector/index.vite.js")",
+            "vue": "@Url.Content("~/libs/vue/vue.esm-browser.prod.js")",
+            "vue-router": "@Url.Content("~/libs/vue-router/vue-router.esm-browser.js")",
+            "@@vueuse/shared": "@Url.Content("~/libs/vueuse/shared/index.mjs")",
+            "@@vueuse/core": "@Url.Content("~/libs/vueuse/core/index.mjs")",
+            "vue-i18n": "@Url.Content("~/libs/vue-i18n/vue-i18n.esm-browser.prod.js")",
+            "pinia": "@Url.Content("~/libs/pinia/pinia.vite.js")",
+            "jwt-decode": "@Url.Content("~/libs/jwt-decode/jwt-decode.esm.js")",
+            "mockjs": "@Url.Content("~/libs/mockjs/mock.vite.js")",
+            "mockjs-fetch": "@Url.Content("~/libs/mockjs-fetch/mockjs-fetch.vite.js")",
+            "nprogress": "@Url.Content("~/libs/nprogress/nprogress.mjs")",
+            "element-plus": "@Url.Content("~/libs/element-plus/index.full.min.mjs")",
+            "@@element-plus/icons-vue": "@Url.Content("~/libs/element-plus/icons-vue/index.mjs")",
+            "echarts/core": "@Url.Content("~/libs/echarts/echarts.esm.min.js")",
+            "vue-echarts": "@Url.Content("~/libs/vue-echarts/index.esm.min.js")",
+            "marked": "@Url.Content("~/libs/marked/marked.esm.js")",
+            "highlight.js": "@Url.Content("~/libs/highlightjs/highlight.min.js")",
+            "mermaid": "@Url.Content("~/libs/mermaid/mermaid.esm.min.mjs")",
+            "template": "@Url.Content("~/utils/template.js")",
+            "store": "@Url.Content("~/store/index.js")"
+          }
+        }
+    </script>
+    <script type="text/html" id="layout-page">
+        @RenderBody()
+    </script>
+    @RenderSection("script",false)
+    <script type="module">
+        import { createApp, ref, reactive, onMounted } from 'vue';
+        import { defineStore } from 'pinia';
+        import ElementPlus from 'element-plus';
+        import en from './libs/element-plus/locale/en.min.mjs';
+        import zhCn from './libs/element-plus/locale/zh-cn.min.mjs';
+        import { ElMessage, ElMessageBox } from 'element-plus';
+        import { ArrowDown, Expand, Fold, Message, Setting, SwitchButton, User } from '@@element-plus/icons-vue';
+        import { post } from '@Url.Content("~/utils/request.js")';
+        import importBy from '@Url.Content("~/utils/import.js")';
+
+        const ViewModel = await importBy('script#page');
+        ViewModel.template = '#layout-page';
+        const app = createApp({
+            components: { ViewModel, ArrowDown },
+            setup() {
+                console.log('app init');
+                onMounted(() => {
+                    document.querySelector('#loading.show').classList.remove('show');
+                });
+                const menus = reactive([]);
+                const menuCollapse = ref(false);
+                const toggleMenu = () => menuCollapse.value = !menuCollapse.value;
+                const hasAside = ref(false);
+                const localization = reactive({
+                    items: @Json.Serialize(cultureItems),
+                    getText() {
+                        return this.items.find(o => o.selected).text;
+                    },
+                    change(value) {
+                        var url = '@Url.Action("Index","Locale")';
+                        var params = new URLSearchParams();
+                        params.set('language', value);
+                        params.set('target', location.href);
+                        location.href = `${url}?${params}`;
+                    }
+                });
+                const elLocale = localization.items.find(o => o.selected).value === 'zh' ? zhCn : en;
+                const confirmLogout = async () => {
+                    try {
+                        await ElMessageBox.confirm('确认退出？', '提示', { type: 'warning' });
+                        try {
+                            var logoutUrl = '@Url.Action("Logout","Account")';
+                            const response = await post(logoutUrl);
+                            if (response.status === 200) {
+                                location.reload();
+                            }
+                        } catch (e) {
+                            console.error(e);
+                        }
+                        ElMessage({
+                            type: 'success',
+                            message: '退出成功',
+                        });
+                    } catch (error) {
+                        console.log(error);
+                        ElMessage({
+                            type: 'info',
+                            message: '退出取消',
+                        });
+                    }
+                };
+                return {
+                    menus,
+                    menuCollapse,
+                    hasAside,
+                    localization,
+                    elLocale,
+                    toggleMenu,
+                    confirmLogout
+                };
+            }
+        });
+        app.use(ElementPlus);
+        app.mount('#app');
+    </script>
+</body>
+</html>

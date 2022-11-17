@@ -1,0 +1,34 @@
+@using System.Globalization
+@model TestViewModel
+@{
+    ViewData["Title"] = "测试";
+    var routes = new {
+        culture = CultureInfo.CurrentCulture.Name,
+        returnUrl = this.Context.Request.Path };
+}
+<div>
+    @ViewBag.Test
+</div>
+<div><a href="@Url.Action("Locale","Home",routes)">@CultureInfo.CurrentCulture.NativeName</a></div>
+<form asp-controller="Home" asp-action="Index" method="post">
+    @Html.ValidationSummary()
+    @Html.EditorForModel()
+    <br />
+    @Html.DescriptionFor(o=>o.UserName)
+    @Html.DropDownListFor(o=>o.Enum1,Html.GetEnumSelectList(typeof(TestEnum)))
+    @*   @Html.EditorFor(o=>o.Sub)
+    *@
+    @if (Model != null)
+    {
+        for (var i = 0; i < Model.Values1.Count; i++)
+        {
+            @Html.EditorFor(o => Model.Values1[i])
+        }
+            
+        for (var i = 0; i < Model.Values2.Count; i++)
+        {
+            @Html.EditorFor(o => Model.Values2[i])
+        }
+    }
+    <button type="submit">Submit</button>
+</form>

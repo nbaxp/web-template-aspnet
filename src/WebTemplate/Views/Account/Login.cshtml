@@ -1,0 +1,104 @@
+@using Microsoft.Extensions.Options
+@using WebTemplate.Services.OAuth
+@using WebTemplate.Shared.Extensions
+@using WebTemplate.Settings
+@inject Microsoft.AspNetCore.Antiforgery.IAntiforgery Antiforgery
+@inject OAuthService oauthService
+@{
+    var action = Url.Action();
+    var requestToken = Antiforgery.GetAndStoreTokens(Context).RequestToken;
+}
+
+<div class="width100 height100 flex-center">
+    <div>
+        <div class="flex-center padding"><layout-logo /></div>
+        <el-card class="container">
+            <div>{{model.errors[""]}}</div>
+            <el-form ref="formRef" size="large" :model="model.data" style="width:300px;" label-width="80px" :rules="model.rules" :action="action" method="post">
+                <template v-for="(value,key,index) in model.data">
+                    <input v-if="model.getType(key)==='hiddenInput'" type="hidden" v-model="model.data[key]" />
+                    <el-form-item v-else :label="model.getMeta(key).title+'|'+model.getType(key)" :prop="key" :error="model.errors[key]">
+                        <el-input v-model="model.data[key]" v-if="model.getType(key).match(/^password$/i)" type="password" clearable />
+                        <el-switch v-model="model.data[key]" v-else-if="model.getType(key).match(/^boolean/i)" clearable />
+                        <el-input v-model="model.data[key]" v-else clearable />
+                    </el-form-item>
+                </template>
+            </el-form>
+            <el-button type="primary" class="width100" v-on:click="submitForm(formRef)">@T("Login")</el-button>
+            <el-divider>@T("ExternalLogin")</el-divider>
+            <div class="left">
+                @foreach (var item in oauthService.Options.Providers)
+                {
+                    <el-space>
+                        <el-link href="@Url.Action("ExternalLogin", "Account",new{provider = item.Name})"><svg-icon name="@item.Name" /></el-link>
+                    </el-space>
+                }
+            </div>
+            <el-divider></el-divider>
+            <div class="right">
+                <el-space>
+                    <el-link href="@Url.Action("ForgotPassword","Account")">@T("ForgotPassword")</el-link>
+                </el-space>
+                <el-space>
+                    <el-link href="@Url.Action("Register","Account")">@T("Register")</el-link>
+                </el-space>
+            </div>
+        </el-card>
+        <div class="flex-center padding"> <layout-footer /></div>
+    </div>
+</div>
+@Html.EditorForModel()
+@section script{
+    <script type="module" id="page">
+        import { ref, reactive } from 'vue';
+        import SvgIcon from '/components/svg-icon.js';
+        import { post } from '/utils/request.js';
+        import { getRules } from '/utils/validators.js';
+        const action = '@action';
+        const requestToken = '@requestToken';
+        const data = @Html.Raw(Json.Serialize(Model));
+        const errors = @Html.Raw(Json.Serialize(ViewData.ModelState.ToErrors()));
+        const schema = @Html.Raw(Json.Serialize(ViewData.ModelMetadata.GetSchema(ViewContext.HttpContext.RequestServices)));
+        export default {
+            components: { SvgIcon },
+            setup() {
+                const formRef = ref(null);
+                const getMeta = (name) => schema.properties[name];
+                const getType = (name) => {
+                    const meta = schema.properties[name];
+                    return meta.template ?? meta.format ?? meta.type;
+                };
+                const rules = reactive(getRules(schema));
+                const submitForm = async (form) => {
+                    try {
+                        await form.validate();
+                        const response = await post(action, data, requestToken);
+                        if (response.status === 200) {
+                            //for login
+                            location.href = data.returnUrl ?? '/';
+                        } else if (response.status == 400) {
+                            //alert(await response.json());
+                            Object.assign(errors, await response.json());
+                        }
+                    } catch (e) {
+                        console.error(e);
+                    }
+                };
+                const model = reactive({
+                    data,
+                    errors,
+                    schema,
+                    rules,
+                    getMeta,
+                    getType
+                });
+                return {
+                    action,
+                    formRef,
+                    model,
+                    submitForm
+                };
+            }
+        };
+    </script>
+}

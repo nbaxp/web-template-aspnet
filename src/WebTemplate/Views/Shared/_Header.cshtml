@@ -1,0 +1,63 @@
+<el-space>
+    <a href="@Url.Content("~/")" class="logo-link">
+        <el-space>
+            <img alt="logo" src="~/assets/images/logo.svg" />
+            <h1 v-if="!menuCollapse">@T("Name")</h1>
+        </el-space>
+    </a>
+    <el-button v-if="hasAside" v-on:click="toggleMenu">
+        <el-icon> <fold v-if="menuCollapse" /><expand v-else /> </el-icon>
+    </el-button>
+    <el-menu mode="horizontal" :default-active="@Url.Content("~")" :ellipsis="false">
+        <template v-for="item in menus">
+            <el-menu-item v-if="!item.hide" :index="item.path">
+                <template #title>
+                    <el-icon v-if="item.icon"><svg-icon :name="item.icon" /></el-icon>
+                    <span>{{item.title}}</span>
+                </template>
+            </el-menu-item>
+        </template>
+    </el-menu>
+</el-space>
+<el-space>
+    <el-dropdown>
+        <span class="el-dropdown-link">
+            {{localization.getText()}}
+            <el-icon class="el-icon--right">
+                <arrow-down />
+            </el-icon>
+        </span>
+        <template #dropdown>
+            <el-dropdown-menu>
+                <el-dropdown-item v-for="item in localization.items" v-on:click="localization.change(item.value)">{{item.text}}</el-dropdown-item>
+            </el-dropdown-menu>
+        </template>
+    </el-dropdown>
+    @if (User.Identity!.IsAuthenticated)
+    {
+        <el-dropdown>
+            <el-space>
+                <el-avatar size="small" src="@Url.Content("~/assets/images/avatar.svg")"></el-avatar>
+                <span>@User.Identity.Name</span>
+                <el-icon><arrow-down /></el-icon>
+            </el-space>
+            <template #dropdown>
+                <el-dropdown-menu>
+                    <el-dropdown-item>
+                        <el-icon><user /></el-icon><el-link href="@Url.Action("Index","Account")">@T("UserCenter")</el-link>
+                    </el-dropdown-item>
+                    <el-dropdown-item>
+                        <el-icon><switch-button /></el-icon>@T("Settings")
+                    </el-dropdown-item>
+                    <el-dropdown-item divided v-on:click="confirmLogout">
+                        <el-icon><setting /></el-icon>@T("Logout")
+                    </el-dropdown-item>
+                </el-dropdown-menu>
+            </template>
+        </el-dropdown>
+    }
+    else
+    {
+        <el-link href="@Url.Action("Login","Account")">@T("Login")</el-link>
+    }
+</el-space>

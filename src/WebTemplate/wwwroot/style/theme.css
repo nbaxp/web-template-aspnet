@@ -1,0 +1,83 @@
+body {
+  font-family: var(--el-font-family);
+  font-size: var(--el-font-size-base);
+  color: var(--el-text-color-regular);
+  background-color: var(--el-bg-color);
+}
+
+body.dark {
+  --dark-text-color: #fff;
+  --dark-bg-color: #0d1117;
+  --dark-hover-color: #eee;
+  --dark-hover-bg-color: #666;
+  --dark-border-color: #666;
+  --dark-border-color-light: #777;
+  --dark-border-color-lighter: #888;
+  --el-bg-color: var(--dark-bg-color);
+  --el-bg-color-overlay: var(--dark-bg-color);
+  --el-text-color-primary: var(--dark-text-color);
+  --el-text-color-regular: var(--dark-text-color);
+  --el-fill-color: var(--dark-bg-color);
+  --el-fill-color-blank: var(--dark-bg-color);
+  --el-fill-color-light: var(--dark-hover-bg-color);
+  --el-disabled-bg-color: var(--dark-hover-bg-color);
+  --el-border-color: var(--dark-border-color);
+  --el-border-color-light: var(--dark-border-color-light);
+  --el-border-color-lighter: var(--dark-border-color-lighter);
+  --el-mask-color: var(--dark-bg-color);
+  color: var(--dark-text-color);
+  background-color: var(--dark-bg-color);
+}
+
+body.dark .el-menu {
+  --el-menu-text-color: var(--dark-text-color);
+  --el-menu-hover-text-color: var(--dark-hover-color);
+  --el-menu-bg-color: var(--dark-bg-color);
+  --el-menu-hover-bg-color: var(--dark-hover-bg-color);
+  --el-menu-active-color: var(--el-color-primary);
+  --el-text-color-regular: var(--dark-text-color);
+}
+
+body.dark .el-dropdown-menu {
+  background-color: var(--dark-bg-color);
+}
+
+body.dark .el-table {
+  --el-table-bg-color: var(--dark-bg-color);
+  --el-table-header-bg-color: var(--dark-bg-color);
+  --el-table-tr-bg-color: var(--dark-bg-color);
+  --el-table-text-color: var(--dark-text-color);
+  --el-table-header-text-color: var(--dark-text-color);
+  --el-table-row-hover-bg-color: var(--dark-hover-bg-color);
+  --el-table-current-row-bg-color: var(--dark-hover-bg-color);
+}
+body.dark .el-table th {
+  background-color: var(--el-table-header-bg-color);
+}
+body.dark .el-table td {
+  background-color: var(--el-table-header-bg-color);
+}
+body.dark .el-drawer {
+  --el-drawer-bg-color: var(--dark-bg-color);
+}
+body.dark .el-drawer .el-drawer__header {
+  color: var(--dark-text-color);
+}
+
+body.dark .el-select__popper.el-popper[role='tooltip'] {
+  background-color: var(--dark-bg-color);
+}
+body.dark .el-select-dropdown__item.hover,
+body.dark .el-select-dropdown__item:hover {
+  background-color: var(--dark-hover-bg-color);
+}
+body.dark .el-button:hover {
+  color: var(--dark-hover-color);
+  --el-button-hover-bg-color: var(--dark-hover-bg-color);
+}
+body.dark .el-popper.is-light {
+  background-color: var(--dark-bg-color);
+}
+body.dark .el-popper {
+  --el-color-white: var(--dark-bg-color);
+}

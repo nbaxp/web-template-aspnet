@@ -1,0 +1,17 @@
+@model List<WebTemplate.Application.Entities.Blog.BlogPost>
+@foreach (var item in Model)
+{
+    <el-row style="margin-bottom:1.5em;">
+        <el-card>
+            <template #header>
+                <div class="card-header">
+                    <span>@item.Title</span>
+                    <span>@item.CreatedOn.ToLocalTime()</span>
+                </div>
+            </template>
+            <div>
+                @Html.Raw(item.BodyOverview)
+            </div>
+        </el-card>
+    </el-row>
+}

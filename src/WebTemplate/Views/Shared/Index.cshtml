@@ -1,0 +1,40 @@
+@{
+    var action = Url.Action();
+    var model = Json.Serialize(Model);
+    var schema = Json.Serialize(ViewData.ModelMetadata.GetSchema(ViewContext.HttpContext.RequestServices, true));
+}
+<a href="@Url.Action("Create")">@T("Create")</a>
+<a href="@Url.Action("Create")">@T("Delete")</a>
+<el-table :data="model.items" style="width: 100%">
+    <el-table-column typeof="selection" />
+    <el-table-column typeof="index" />
+    <template v-for="(item,key) in schema.properties.items.properties">
+        <el-table-column v-if="item.format!=='key'" :prop="key" :label="item.title" />
+    </template>
+    <el-table-column label="@T("Operations")" width="120">
+        <template #default="scope">
+            <el-link :href="'@Url.Action("Edit",new{id=""})/'+scope.row.id">@T("Edit")</el-link>
+            <el-link :href="'@Url.Action("Delete",new{id=""})/'+scope.row.id">@T("Delete")</el-link>
+        </template>
+    </el-table-column>
+</el-table>
+<el-pagination v-model:currentPage="model.pageIndex"
+               v-model:page-size="model.pageSize"
+               :total="model.totalCount"
+               layout="total, sizes, prev, pager, next, jumper"
+               background />
+@section script{
+    <script type="module" id="page">
+        import { ref, reactive } from 'vue';
+        export default {
+            setup() {
+                const model = reactive(@Html.Raw(model));
+                const schema = reactive(@Html.Raw(schema));
+                return {
+                    model,
+                    schema
+                }
+            }
+        };
+    </script>
+}

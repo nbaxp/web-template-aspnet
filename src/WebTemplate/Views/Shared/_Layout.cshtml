@@ -1,0 +1,80 @@
+@inject IOptions<RequestLocalizationOptions> requestLocalizationOptions
+@{
+    var cultureItems = requestLocalizationOptions.Value.SupportedUICultures?
+       .Select(o => new SelectListItem { Value = o.Name, Text = o.NativeName, Selected = o.Name == CultureInfo.CurrentCulture.Name })
+       .ToList();
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <base href="@Url.Content("~/")" />
+    <link rel="stylesheet" href="~/style/site.css" asp-append-version="true" />
+    <title>@ViewData["Title"]</title>
+</head>
+<body>
+    <div id="app"></div>
+    <script type="text/html" id="appComponent">
+        <el-config-provider :locale="elLocale">
+            <el-container v-loading="loading">
+                <el-header><partial name="_Header"></partial></el-header>
+                <el-container class="body">
+                    <el-main>
+                        <view-model></view-model>
+                    </el-main>
+                    <el-footer><partial name="_Footer"></partial></el-footer>
+                    <el-backtop target=".body" />
+                </el-container>
+            </el-container>
+        </el-config-provider>
+    </script>
+    <script type="text/html" id="pageComponent">
+        @RenderBody()
+    </script>
+    <script type="importmap">
+        {
+          "imports": {
+            "@@vue/devtools-api":"@Url.Content("~/libs/vue/devtools-api/index.js")",
+            "vue-demi": "@Url.Content("~/libs/vue-demi/index.mjs")",
+            "__commonjs": "@Url.Content("~/libs/commonJS/index.vite.js")",
+            "resize-detector": "@Url.Content("~/libs/resize-detector/index.vite.js")",
+            "vue": "@Url.Content("~/libs/vue/vue.esm-browser.prod.js")",
+            "vue-router": "@Url.Content("~/libs/vue-router/vue-router.esm-browser.js")",
+            "@@vueuse/shared": "@Url.Content("~/libs/vueuse/shared/index.mjs")",
+            "@@vueuse/core": "@Url.Content("~/libs/vueuse/core/index.mjs")",
+            "vue-i18n": "@Url.Content("~/libs/vue-i18n/vue-i18n.esm-browser.prod.js")",
+            "pinia": "@Url.Content("~/libs/pinia/pinia.vite.js")",
+            "jwt-decode": "@Url.Content("~/libs/jwt-decode/jwt-decode.esm.js")",
+            "mockjs": "@Url.Content("~/libs/mockjs/mock.vite.js")",
+            "mockjs-fetch": "@Url.Content("~/libs/mockjs-fetch/mockjs-fetch.vite.js")",
+            "nprogress": "@Url.Content("~/libs/nprogress/nprogress.mjs")",
+            "element-plus": "@Url.Content("~/libs/element-plus/index.full.min.mjs")",
+            "@@element-plus/icons-vue": "@Url.Content("~/libs/element-plus/icons-vue/index.mjs")",
+            "echarts/core": "@Url.Content("~/libs/echarts/echarts.esm.min.js")",
+            "vue-echarts": "@Url.Content("~/libs/vue-echarts/index.esm.min.js")",
+            "marked": "@Url.Content("~/libs/marked/marked.esm.js")",
+            "highlight.js": "@Url.Content("~/libs/highlightjs/highlight.min.js")",
+            "mermaid": "@Url.Content("~/libs/mermaid/mermaid.esm.min.mjs")",
+            "template": "@Url.Content("~/utils/template.js")",
+            "store": "@Url.Content("~/store/index.js")"
+          }
+        }
+    </script>
+    @RenderSection("script",false)
+    <script type="module">
+        import { useApp } from '/index.js';
+        import importBy from '@Url.Content("~/utils/import.js")';
+
+        const ViewModel = await importBy('script#page');
+        ViewModel.template = '#pageComponent';
+
+        const logoutUrl = '@Url.Action("Logout","Account")';
+        const localeUrl = '@Url.Action("Index","Locale")';
+        const localeItems = @Json.Serialize(cultureItems);
+
+        const app = useApp(ViewModel, logoutUrl, localeUrl, localeItems);
+        app.mount('#app');
+    </script>
+</body>
+</html>

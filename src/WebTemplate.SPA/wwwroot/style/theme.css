@@ -1,0 +1,18 @@
+body {
+  font-family: var(--el-font-family);
+  font-size: var(--el-font-size-base);
+  color: var(--el-text-color-regular);
+  background-color: var(--el-bg-color);
+}
+
+html.dark {
+  --dark-text-color: #fff;
+  --dark-bg-color: #0d1117;
+  --dark-hover-color: #eee;
+  --dark-hover-bg-color: #666;
+  --dark-border-color: #666;
+  --dark-border-color-light: #777;
+  --dark-border-color-lighter: #888;
+  color: var(--dark-text-color);
+  background-color: var(--dark-bg-color);
+}

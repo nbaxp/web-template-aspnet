@@ -1,0 +1,15 @@
+<el-card class="container">
+    <div>{{model.errors[""]}}</div>
+    <el-form ref="formRef" size="large" :model="model.data" label-width="240px" :rules="model.rules" :action="action" method="post">
+        <template v-for="(value,key,index) in model.data">
+            <template v-if="model.getType(key)&&model.getType(key)!=='hiddenInput'&&model.getType(key)!=='key'">
+                <el-form-item :label="model.getMeta(key).title" :prop="key" :error="model.errors[key]">
+                    <el-input v-model="model.data[key]" v-if="model.getType(key).match(/^password$/i)" type="password" clearable />
+                    <el-switch v-model="model.data[key]" v-else-if="model.getType(key).match(/^boolean/i)" clearable />
+                    <el-input v-model="model.data[key]" v-else clearable />
+                </el-form-item>
+            </template>
+        </template>
+    </el-form>
+    <el-button type="primary" class="width100" v-on:click="submitForm(formRef)">@T("Confirm")</el-button>
+</el-card>

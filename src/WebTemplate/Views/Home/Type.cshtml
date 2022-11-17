@@ -1,0 +1,17 @@
+﻿@model TypeViewModel
+@{
+    ViewData["Title"] = "Home Page";
+}
+
+<form method="post" enctype="multipart/form-data">
+    @Html.ValidationSummary()
+    @Html.TextBoxFor(o=>o.InputText_string_DataTypeUpload,new{type="file"})
+    @Html.EditorForModel()
+    @Html.DropDownListFor(o=>o.Select_CustomEnum_HtmlHelperDropDownList,Html.GetEnumSelectList<CustomEnum>())
+    @Html.ListBoxFor(o=>o.Select_CustomEnum_HtmlHelperDropDownList,Html.GetEnumSelectList<CustomEnum>())
+    @Html.LabelFor(o=>o.InputRadio_string_HtmlRadioButtonFor) @Html.RadioButtonFor(o=>o.InputText_CustomEnum,"value1")
+    @Html.LabelFor(o=>o.InputRadio_string_HtmlRadioButtonFor) @Html.RadioButtonFor(o=>o.InputText_CustomEnum,"value2")
+    @Html.LabelFor(o=>o.InputRadio_string_HtmlRadioButtonFor) @Html.RadioButtonFor(o=>o.InputText_CustomEnum,"value3")
+    <br />
+    <button type="submit">Submit</button>
+</form>
