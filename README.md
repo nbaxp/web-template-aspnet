@@ -33,5 +33,5 @@ Husky.NET 配置:
 dotnet new tool-manifest
 dotnet tool install Husky
 dotnet husky install
-dotnet husky add pre-commit -c "dotnet format"
+dotnet husky add pre-commit -c "dotnet format && git add ."
 ```
