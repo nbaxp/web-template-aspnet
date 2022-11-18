@@ -14,7 +14,8 @@ public class PaginationViewModel<T>
     public DateTimeOffset? DateTimeOffset { get; set; }
 }
 
-public class QeuryTemp {
+public class QeuryTemp
+{
     public string? Test { get; set; }
 }
 

@@ -1,4 +1,5 @@
 using System.Globalization;
+using System.Linq;
 using System.Text.Json;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.DataAnnotations;
@@ -11,7 +12,6 @@ using WebTemplate.Application.Interfaces;
 using WebTemplate.Web.Extensions;
 using WebTemplate.Web.Models;
 using WebTemplate.Web.Resources;
-using System.Linq;
 
 namespace WebTemplate.Controllers;
 

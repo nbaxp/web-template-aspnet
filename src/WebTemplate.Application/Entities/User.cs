@@ -6,7 +6,7 @@ using WebTemplate.Application.Shared;
 namespace WebTemplate.Application.Entities;
 
 [Display(Name = "用户")]
-public class User : BaseEntity, IConcurrencyStamp,IAudit
+public class User : BaseEntity, IConcurrencyStamp, IAudit
 {
     [Display(Name = "用户名")]
     [ReadOnly(true)]

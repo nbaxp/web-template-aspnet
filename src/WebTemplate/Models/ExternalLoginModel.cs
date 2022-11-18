@@ -5,7 +5,7 @@ namespace WebTemplate.Models;
 
 public class ExternalLoginModel
 {
-    [HiddenInput(DisplayValue =false)]
+    [HiddenInput(DisplayValue = false)]
     public string Provider { get; set; } = null!;
     [HiddenInput(DisplayValue = false)]
     public string OpenId { get; set; } = null!;

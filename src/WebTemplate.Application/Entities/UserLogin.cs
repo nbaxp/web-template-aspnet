@@ -2,7 +2,7 @@ using WebTemplate.Application.Shared;
 
 namespace WebTemplate.Application.Entities;
 
-public class UserLogin:BaseEntity
+public class UserLogin : BaseEntity
 {
     public string LoginProvider { get; set; } = null!;
     public string ProviderKey { get; set; } = null!;

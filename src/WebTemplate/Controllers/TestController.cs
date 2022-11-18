@@ -17,13 +17,13 @@ public class TestController : Controller
         {
             DateTimeOffset_Input_DateTimeLocal = dateTimeOffsetNow,
             DateTimeOffset_Date_InputDate = dateTimeOffsetNow,
-            DateTimeOffset_Date_InputTime=dateTimeOffsetNow
+            DateTimeOffset_Date_InputTime = dateTimeOffsetNow
         };
         return View(model);
     }
 
     [HttpPost]
-    public IActionResult Index([FromBody]Class2FormModel model)
+    public IActionResult Index([FromBody] Class2FormModel model)
     {
         if (ModelState.IsValid)
         {

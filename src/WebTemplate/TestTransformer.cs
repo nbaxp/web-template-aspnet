@@ -4,7 +4,7 @@ public class TestTransformer : DynamicRouteValueTransformer
 {
     public override ValueTask<RouteValueDictionary> TransformAsync(HttpContext httpContext, RouteValueDictionary values)
     {
-        if(httpContext.Request.Path.Value.Substring(httpContext.Request.PathBase.Value.Length)=="/")
+        if (httpContext.Request.Path.Value.Substring(httpContext.Request.PathBase.Value.Length) == "/")
         {
 
         }

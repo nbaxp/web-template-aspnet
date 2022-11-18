@@ -19,7 +19,7 @@ public class CustomIDisplayMetadataProvider : IDisplayMetadataProvider
         {
             if (item is ValidationAttribute attribute)
             {
-                
+
                 if (attribute is DataTypeAttribute data)
                 {
                     attribute.ErrorMessage = $"DataTypeAttribute_{data.GetDataTypeName()}";

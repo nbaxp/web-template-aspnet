@@ -15,7 +15,7 @@ public class OAuthService
 
     public OAuthOptions Options { get; private set; }
 
-    public OAuthService(ILogger<OAuthService> logger,IHttpContextAccessor httpContextAccessor, IOptions<OAuthOptions> options)
+    public OAuthService(ILogger<OAuthService> logger, IHttpContextAccessor httpContextAccessor, IOptions<OAuthOptions> options)
     {
         this._logger = logger;
         this._httpContextAccessor = httpContextAccessor;
