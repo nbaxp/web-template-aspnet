@@ -29,8 +29,8 @@ public class EmailService : IEmailService
         message.Body = new TextPart("plain") { Text = body };
 
         using var client = new SmtpClient();
-        await client.ConnectAsync(host, port, true);
-        await client.AuthenticateAsync(email, password);
-        await client.SendAsync(message);
+        await client.ConnectAsync(host, port, true).ConfigureAwait(false);
+        await client.AuthenticateAsync(email, password).ConfigureAwait(false);
+        await client.SendAsync(message).ConfigureAwait(false);
     }
 }

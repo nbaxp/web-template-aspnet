@@ -41,7 +41,7 @@ public class LocaleController : Controller
 
     public IActionResult Resources(string? id)
     {
-        var culture = id == null ? CultureInfo.CurrentCulture.Name : id;
+        var culture = id ?? CultureInfo.CurrentCulture.Name;
         Response.Cookies.Append(
             CookieRequestCultureProvider.DefaultCookieName,
             CookieRequestCultureProvider.MakeCookieValue(new RequestCulture(culture)),

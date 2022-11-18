@@ -31,12 +31,12 @@ public class GenericMvcController<TEntity, TDisplayModel, TEditModel> : Controll
                 {
                     query = query.Where(model.Query);
                 }
-                model.TotalCount = await query.CountAsync();
+                model.TotalCount = await query.CountAsync().ConfigureAwait(false);
                 if (!string.IsNullOrWhiteSpace(model.OrderBy))
                 {
                     query = query.OrderBy(model.OrderBy);
                 }
-                model.Items = await query.Skip(model.PageSize * (model.PageIndex - 1)).Take(model.PageSize).ToListAsync();
+                model.Items = await query.Skip(model.PageSize * (model.PageIndex - 1)).Take(model.PageSize).ToListAsync().ConfigureAwait(false);
                 return this.Result(model);
             }
             return BadRequest();
@@ -54,7 +54,7 @@ public class GenericMvcController<TEntity, TDisplayModel, TEditModel> : Controll
         {
             return BadRequest();
         }
-        var entity = await this._dbContext.Set<TEntity>().FirstOrDefaultAsync(o => o.Id == id);
+        var entity = await _dbContext.Set<TEntity>().FirstOrDefaultAsync(o => o.Id == id).ConfigureAwait(false);
         if (entity == null)
         {
             return NotFound();
@@ -78,7 +78,7 @@ public class GenericMvcController<TEntity, TDisplayModel, TEditModel> : Controll
         {
             var entity = model.To<TEntity>();
             this._dbContext.Set<TEntity>().Add(entity);
-            await this._dbContext.SaveChangesAsync();
+            await _dbContext.SaveChangesAsync().ConfigureAwait(false);
             return Ok();
         }
         return BadRequest();
@@ -91,7 +91,7 @@ public class GenericMvcController<TEntity, TDisplayModel, TEditModel> : Controll
         {
             return BadRequest();
         }
-        var entity = await this._dbContext.Set<TEntity>().FirstOrDefaultAsync(o => o.Id == id);
+        var entity = await _dbContext.Set<TEntity>().FirstOrDefaultAsync(o => o.Id == id).ConfigureAwait(false);
         if (entity == null)
         {
             return NotFound();
@@ -109,7 +109,7 @@ public class GenericMvcController<TEntity, TDisplayModel, TEditModel> : Controll
             var id = (Guid)(typeof(TEditModel).GetProperty("Id")?.GetValue(model)!);
             var entity = this._dbContext.Set<TEntity>().FirstOrDefault(o => o.Id == id);
             entity.From(model);
-            await this._dbContext.SaveChangesAsync();
+            await _dbContext.SaveChangesAsync().ConfigureAwait(false);
             return Ok();
         }
         return BadRequest();
@@ -119,9 +119,9 @@ public class GenericMvcController<TEntity, TDisplayModel, TEditModel> : Controll
     public virtual async Task<IActionResult> Delete(List<Guid> model)
     {
         var query = this._dbContext.Set<TEntity>();
-        var entities = await query.Where(o => model.Contains(o.Id)).ToListAsync();
+        var entities = await query.Where(o => model.Contains(o.Id)).ToListAsync().ConfigureAwait(false);
         this._dbContext.RemoveRange(entities);
-        await this._dbContext.SaveChangesAsync();
+        await _dbContext.SaveChangesAsync().ConfigureAwait(false);
         return Ok();
     }
 }

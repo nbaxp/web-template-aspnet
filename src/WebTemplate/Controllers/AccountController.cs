@@ -101,7 +101,7 @@ public class AccountController : Controller
     [AllowAnonymous]
     public async Task<IActionResult> OAuthCallback(string id, string code)
     {
-        var openId = await _oAuthService.GetOpenId(id, code);
+        var openId = await _oAuthService.GetOpenId(id, code).ConfigureAwait(false);
         if (User.Identity!.IsAuthenticated)// 已登录增加三方登录
         {
             if (!_userLoginRepository.Set().Any(o => o.LoginProvider == id && o.ProviderKey == openId))// 没有 openid 增加 openid 并关联当前用户

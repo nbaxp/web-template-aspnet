@@ -1,15 +1,10 @@
 using System.Globalization;
-using System.Linq;
-using System.Text.Json;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.DataAnnotations;
-using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.Extensions.Localization;
 using WebTemplate.Application.Email;
 using WebTemplate.Application.Entities.Blog;
 using WebTemplate.Application.interfaces;
 using WebTemplate.Application.Interfaces;
-using WebTemplate.Web.Extensions;
 using WebTemplate.Web.Models;
 using WebTemplate.Web.Resources;
 
@@ -96,7 +91,7 @@ public class HomeController : Controller
     [HttpGet]
     public async Task<IActionResult> Valid(string userName)
     {
-        await Task.Delay(1 * 1000);
+        await Task.Delay(1 * 1000).ConfigureAwait(false);
         return Ok(userName == "admin");
     }
 
@@ -111,7 +106,7 @@ public class HomeController : Controller
     //    });
     //}
 
-    private bool IsJsonRequest(ControllerBase controller)
+    private static bool IsJsonRequest(ControllerBase controller)
     {
         if (controller is null)
         {

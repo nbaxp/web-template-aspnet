@@ -77,7 +77,7 @@ try
     using var db = scope.ServiceProvider.GetRequiredService<DbContext>();
     if (db.Database.EnsureCreated())
     {
-        await scope.ServiceProvider.GetRequiredService<AppDbContextSeed>().Seed();
+        await scope.ServiceProvider.GetRequiredService<AppDbContextSeed>().Seed().ConfigureAwait(false);
     }
     //
     app.Run();

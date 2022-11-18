@@ -7,7 +7,7 @@ namespace WebTemplate.Shared.Extensions;
 
 public static class ObjectJsonExtensions
 {
-    private static JsonSerializerOptions _jsonSerializerOptions = new JsonSerializerOptions
+    private static readonly JsonSerializerOptions _jsonSerializerOptions = new JsonSerializerOptions
     {
         Encoder = JavaScriptEncoder.Create(UnicodeRanges.All),
         ReferenceHandler = ReferenceHandler.IgnoreCycles,

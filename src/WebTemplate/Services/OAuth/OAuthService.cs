@@ -34,16 +34,16 @@ public class OAuthService
     public async Task<Dictionary<string, string>> GetUserInfo(string provider, string code)
     {
         var options = this.Options.Providers.First(o => o.Name == provider);
-        var tokenResult = await this.GetToken(options, code);
-        var userInfoResult = await this.GetUserInfoInternal(options, tokenResult[ACCESS_TOKEN_NAME]);
+        var tokenResult = await GetToken(options, code).ConfigureAwait(false);
+        var userInfoResult = await GetUserInfoInternal(options, tokenResult[ACCESS_TOKEN_NAME]).ConfigureAwait(false);
         return userInfoResult;
     }
 
     public async Task<string?> GetOpenId(string provider, string code)
     {
         var options = this.Options.Providers.First(o => o.Name == provider);
-        var tokenResult = await this.GetToken(options, code);
-        var userInfoResult = await this.GetUserInfoInternal(options, tokenResult[ACCESS_TOKEN_NAME]);
+        var tokenResult = await GetToken(options, code).ConfigureAwait(false);
+        var userInfoResult = await GetUserInfoInternal(options, tokenResult[ACCESS_TOKEN_NAME]).ConfigureAwait(false);
         if (userInfoResult.TryGetValue(options.UserIdName!, out var userId))
         {
             return userId;
@@ -53,25 +53,25 @@ public class OAuthService
 
     public async Task<Dictionary<string, string>> GetToken(OAuthProviderOptions options, string code)
     {
-        var dictionary = this.getRequestOptions(options.TokenEndpoint);
+        var dictionary = getRequestOptions(options.TokenEndpoint);
         var url = dictionary["url"]
             .SetQueryParam(options.ClientIdName ?? CLIENT_ID_NAME, options.ClientId)
             .SetQueryParam(options.ClientSecretName ?? CLIENT_SECRET_NAME, options.ClientSecret)
             .SetQueryParam("code", code)
             .SetQueryParamIf(options.TokenEndpoint.Contains(REDIRECT_URI), REDIRECT_URI, UrlContent(options.CallbackPath));
-        var result = await this.RequestAsync(url, dictionary["method"], dictionary["application"], dictionary["payload"], dictionary["accept"]);
+        var result = await RequestAsync(url, dictionary["method"], dictionary["application"], dictionary["payload"], dictionary["accept"]).ConfigureAwait(false);
         return result;
     }
 
     public async Task<Dictionary<string, string>> GetUserInfoInternal(OAuthProviderOptions options, string access_token)
     {
-        var dictionary = this.getRequestOptions(options.UserInformationEndpoint);
+        var dictionary = getRequestOptions(options.UserInformationEndpoint);
         var url = Url.Parse(dictionary["url"]);
-        var result = await this.RequestAsync(url, dictionary["method"], dictionary["application"], dictionary["payload"], dictionary["accept"], access_token, dictionary["token"]);
+        var result = await RequestAsync(url, dictionary["method"], dictionary["application"], dictionary["payload"], dictionary["accept"], access_token, dictionary["token"]).ConfigureAwait(false);
         return result;
     }
 
-    private Dictionary<string, string> getRequestOptions(string endpoint)
+    private static Dictionary<string, string> getRequestOptions(string endpoint)
     {
         var groupSeparator = ';';
         var keyValueSeparator = '|';
@@ -117,20 +117,20 @@ public class OAuthService
         var request = (isPost
             ? (isQueryPayload ? url : url.RemoveQuery())
             : url).WithHeader("User-Agent", "curl");
-        var result = string.Empty;
         // add access_token
         if (access_token != null)
         {
             request = tokenPosition == "header" ? request.WithOAuthBearerToken(access_token) : request.SetQueryParam(nameof(access_token), access_token);
         }
+        string? result;
         if (isPost)
         {
             try
             {
                 var response = isJsonRequest
-                    ? await request.PostJsonAsync(data)
-                    : (isQueryPayload ? await request.PostAsync() : await request.PostUrlEncodedAsync(data));
-                result = await response.GetStringAsync();
+                    ? await request.PostJsonAsync(data).ConfigureAwait(false)
+                    : (isQueryPayload ? await request.PostAsync().ConfigureAwait(false) : await request.PostUrlEncodedAsync(data).ConfigureAwait(false));
+                result = await response.GetStringAsync().ConfigureAwait(false);
             }
             catch (Exception ex)
             {
@@ -140,7 +140,7 @@ public class OAuthService
         }
         else
         {
-            result = await request.GetStringAsync();
+            result = await request.GetStringAsync().ConfigureAwait(false);
         }
         return isJsonResponse ? result.JsonTextToDictionary() : result.QueryStringToDictionary();
     }

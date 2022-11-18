@@ -1,5 +1,3 @@
-using WebTemplate.Web.Models;
-
 namespace WebTemplate.Web;
 
 public class PaginationViewModel<T>

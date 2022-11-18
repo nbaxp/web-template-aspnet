@@ -2,9 +2,9 @@ namespace WebTemplate.Authentication;
 
 public class RoleService : IRoleService
 {
-    private List<string> _roleRepository = new() { "admin1", "user" };
+    private readonly List<string> _roleRepository = new() { "admin1", "user" };
 
-    private string[]? _roles = null;
+    private string[]? _roles;
 
     public string[] GetRoles()
     {

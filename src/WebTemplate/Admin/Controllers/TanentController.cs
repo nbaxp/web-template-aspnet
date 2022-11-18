@@ -1,12 +1,11 @@
 using Microsoft.AspNetCore.Mvc;
 
-namespace WebTemplate.Admin.Controllers
+namespace WebTemplate.Admin.Controllers;
+
+public class TanentController : Controller
 {
-    public class TanentController : Controller
+    public IActionResult Index()
     {
-        public IActionResult Index()
-        {
-            return View();
-        }
+        return View();
     }
 }

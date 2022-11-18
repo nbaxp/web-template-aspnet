@@ -13,8 +13,8 @@ public class WebSocketTestController : ControllerBase
     {
         if (HttpContext.WebSockets.IsWebSocketRequest)
         {
-            using WebSocket webSocket = await HttpContext.WebSockets.AcceptWebSocketAsync();
-            await Echo(HttpContext, webSocket);
+            using WebSocket webSocket = await HttpContext.WebSockets.AcceptWebSocketAsync().ConfigureAwait(false);
+            await Echo(HttpContext, webSocket).ConfigureAwait(false);
         }
         else
         {
@@ -22,16 +22,16 @@ public class WebSocketTestController : ControllerBase
         }
     }
 
-    private async Task Echo(HttpContext httpContext, WebSocket webSocket)
+    private static async Task Echo(HttpContext httpContext, WebSocket webSocket)
     {
         var buffer = new byte[1024 * 4];
-        WebSocketReceiveResult result = await webSocket.ReceiveAsync(new ArraySegment<byte>(buffer), CancellationToken.None);
+        WebSocketReceiveResult result = await webSocket.ReceiveAsync(new ArraySegment<byte>(buffer), CancellationToken.None).ConfigureAwait(false);
         while (!result.CloseStatus.HasValue)
         {
-            await webSocket.SendAsync(new ArraySegment<byte>(buffer, 0, result.Count), result.MessageType, result.EndOfMessage, CancellationToken.None);
+            await webSocket.SendAsync(new ArraySegment<byte>(buffer, 0, result.Count), result.MessageType, result.EndOfMessage, CancellationToken.None).ConfigureAwait(false);
 
-            result = await webSocket.ReceiveAsync(new ArraySegment<byte>(buffer), CancellationToken.None);
+            result = await webSocket.ReceiveAsync(new ArraySegment<byte>(buffer), CancellationToken.None).ConfigureAwait(false);
         }
-        await webSocket.CloseAsync(result.CloseStatus.Value, result.CloseStatusDescription, CancellationToken.None);
+        await webSocket.CloseAsync(result.CloseStatus.Value, result.CloseStatusDescription, CancellationToken.None).ConfigureAwait(false);
     }
 }

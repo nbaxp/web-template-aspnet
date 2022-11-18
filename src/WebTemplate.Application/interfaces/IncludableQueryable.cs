@@ -5,7 +5,7 @@ namespace WebTemplate.Application.interfaces;
 
 public class IncludableQueryable<TEntity, TProperty> : IIncludableQueryable<TEntity, TProperty>
 {
-    private IQueryable<TEntity> _query;
+    private readonly IQueryable<TEntity> _query;
 
     public IncludableQueryable(IQueryable<TEntity> query)
     {

@@ -5,11 +5,11 @@ namespace WebTemplate.Application.interfaces;
 
 public static class RepositoryExtensions
 {
-    private static string PROVIDER_NAME = "EntityQueryProvider";
-    private static string TYPE_FULL_NAME = "Microsoft.EntityFrameworkCore.EntityFrameworkQueryableExtensions";
-    private static string AS_NO_TRACKING_NAME = "AsNoTracking";
-    private static string INCLUDE_NAME = "Include";
-    private static string THEN_INCLUDE_NAME = "ThenInclude";
+    private const string PROVIDER_NAME = "EntityQueryProvider";
+    private const string TYPE_FULL_NAME = "Microsoft.EntityFrameworkCore.EntityFrameworkQueryableExtensions";
+    private const string AS_NO_TRACKING_NAME = "AsNoTracking";
+    private const string INCLUDE_NAME = "Include";
+    private const string THEN_INCLUDE_NAME = "ThenInclude";
 
     private static MethodInfo[]? Methods;
 
@@ -81,7 +81,7 @@ public static class RepositoryExtensions
 
     private static MethodInfo[] GetMethods(IQueryProvider provider)
     {
-        return Methods == null ? Methods = provider.GetType().Assembly.GetType(TYPE_FULL_NAME)!.GetMethods() : Methods;
+        return Methods ?? (Methods = provider.GetType().Assembly.GetType(TYPE_FULL_NAME)!.GetMethods());
     }
 
     private static IQueryable<TEntity> CreateQuery<TEntity>(IQueryable<TEntity> source, MethodInfo methodInfo, Expression path, params Type[] types)
